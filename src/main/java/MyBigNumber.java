@@ -1,12 +1,6 @@
 import java.util.logging.Logger;
 
-/**
- * Lớp MyBigNumber thực hiện thuật toán cộng hai số lớn (chuỗi).
- * Cách làm: Mô phỏng lại cách đặt tính rồi cộng từ phải sang trái của học sinh tiểu học (lớp 3).
- *
- * Tác giả: Nguyễn Tấn Đạt (NTDat-16)
- * Phiên bản: 0.0.1
- */
+
 public class MyBigNumber {
 
     // Khởi tạo logger để ghi lại lịch sử các bước theo yêu cầu đề bài
