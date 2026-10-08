@@ -1,5 +1,6 @@
-import java.util.logging.Logger;
+package com.mybignumber;
 
+import java.util.logging.Logger;
 
 public class MyBigNumber {
 
