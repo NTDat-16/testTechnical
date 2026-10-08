@@ -4,43 +4,65 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.ntdat</groupId>
-    <artifactId>testTechnical</artifactId>
+    <artifactId>web</artifactId>
     <version>0.0.1</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>testTechnical - Multi-Module Project</name>
-    <description>Dự án Cộng 2 Số Lớn gồm module Core và Web Application</description>
+    <name>web - Ứng dụng Web cộng 2 số lớn (Task 2)</name>
+    <description>Ứng dụng Web Spring Boot sử dụng lại kết quả Task 1 dưới dạng thư viện JAR</description>
 
-    <modules>
-        <module>core</module>
-        <module>web</module>
-    </modules>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
+    </parent>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>3.2.5</spring.boot.version>
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Boot Dependencies BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+    <dependencies>
+        <!-- TÁI SỬ DỤNG KẾT QUẢ TASK 1 NHƯ MỘT THƯ VIỆN (GÓI .JAR) -->
+        <dependency>
+            <groupId>com.mybignumber</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MyBigNumber-0.0.1.jar</systemPath>
+        </dependency>
 
-            <!-- Module Core -->
-            <dependency>
-                <groupId>com.github.ntdat</groupId>
-                <artifactId>core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <!-- Spring Boot Starter Web (Spring MVC + Tomcat) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Thymeleaf Template Engine -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Đóng gói kèm thư viện system-scope (MyBigNumber-0.0.1.jar) vào file jar cuối cùng -->
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
