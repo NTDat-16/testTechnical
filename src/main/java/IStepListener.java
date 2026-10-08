@@ -1,14 +1,12 @@
 /**
- * Interface IStepListener định nghĩa callback lắng nghe từng bước thực hiện của thuật toán cộng.
- * Được thiết kế để đóng gói và bàn giao cho các nhóm khác phát triển giao diện (GUI/Console/Web)
- * có thể nhận và hiển thị trực quan các bước tính toán theo thời gian thực.
+ * Interface lắng nghe từng bước tính toán của phép cộng.
+ * Được tạo ra để bàn giao cho các bạn làm giao diện (UI) hoặc ứng dụng Console
+ * có thể lấy các bước giải thích và hiển thị lên màn hình.
  */
-@FunctionalInterface
 public interface IStepListener {
     /**
-     * Được gọi sau mỗi bước thực hiện phép cộng.
-     *
-     * @param stepMessage Diễn giải chi tiết bước thực hiện (ví dụ: "Bước 1: Lấy 4 cộng với 7 được 11...")
+     * Hàm được gọi mỗi khi tính xong một bước.
+     * @param message Câu diễn giải bước tính toán (ví dụ: "Bước 1: Lấy 4 cộng 7...")
      */
-    void onStep(String stepMessage);
+    void onStep(String message);
 }
