@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cộng 2 Số Lớn - MyBigNumber Web</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .main-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+        .step-item {
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid #0d6efd !important;
+        }
+        .step-item:hover {
+            background-color: #f1f6ff;
+            transform: translateX(4px);
+        }
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 1px solid #a5d6a7;
+            border-radius: 10px;
+        }
+        .break-word {
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Thanh điều hướng Header -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-calculator-fill fs-4"></i>
+            <span>MyBigNumber Web</span>
+        </a>
+        <span class="navbar-text text-white-50 d-none d-md-inline">
+            Ứng dụng Web cộng 2 số lớn & hiển thị tiến trình (Spring Boot + Thymeleaf + Bootstrap)
+        </span>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Card 1: Form Nhập Liệu -->
+            <div class="card main-card mb-4">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="card-title mb-0 text-primary fw-semibold d-flex align-items-center gap-2">
+                        <i class="bi bi-input-cursor-text"></i>
+                        <span>Nhập hai số lớn cần cộng</span>
+                    </h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <!-- Thông báo lỗi nếu có -->
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <div th:text="${errorMessage}">Thông báo lỗi dữ liệu</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <form action="/calculate" method="post" id="calcForm">
+                        <div class="mb-3">
+                            <label for="stn1" class="form-label fw-medium">Số thứ nhất (stn1):</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-1-circle"></i></span>
+                                <input type="text" class="form-control form-control-lg font-monospace" id="stn1" name="stn1" 
+                                       th:value="${stn1}" placeholder="Ví dụ: 1234" required autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="stn2" class="form-label fw-medium">Số thứ hai (stn2):</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-2-circle"></i></span>
+                                <input type="text" class="form-control form-control-lg font-monospace" id="stn2" name="stn2" 
+                                       th:value="${stn2}" placeholder="Ví dụ: 897" required autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg px-4 d-flex align-items-center gap-2 shadow-sm">
+                                    <i class="bi bi-plus-circle-fill"></i>
+                                    <span>Cộng hai số</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="clearForm()">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                </button>
+                            </div>
+                            <!-- Các nút gán sẵn dữ liệu mẫu -->
+                            <div class="d-flex flex-wrap gap-1 mt-2 mt-md-0">
+                                <span class="align-self-center me-1 text-muted small">Mẫu nhanh:</span>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setExample('1234', '897')">
+                                    Ví dụ đề bài (1234 + 897)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-success" onclick="setExample('9999999999', '1')">
+                                    Nhớ liên tục (999... + 1)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-dark" onclick="setBigNumberExample()">
+                                    Số cực lớn (50 chữ số)
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Card 2: Hiển Thị Kết Quả (Chỉ hiện khi đã tính toán thành công) -->
+            <div th:if="${result != null}" class="mb-4">
+                <div class="result-box p-4 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-success fw-bold text-uppercase fs-6">
+                            <i class="bi bi-check-circle-fill me-1"></i> Kết quả phép tính
+                        </span>
+                        <span class="badge bg-success fs-6" th:text="'Độ dài: ' + ${result.length()} + ' chữ số'">Độ dài</span>
+                    </div>
+                    <div class="fs-4 text-dark break-word font-monospace">
+                        <span th:text="${stn1}">1234</span>
+                        <span class="text-primary fw-bold mx-2">+</span>
+                        <span th:text="${stn2}">897</span>
+                        <span class="text-success fw-bold mx-2">=</span>
+                        <span class="fw-bold text-success fs-3" th:text="${result}">2131</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Hiển Thị Tiến Trình Thực Hiện Phép Toán (Yêu cầu trọng tâm) -->
+            <div th:if="${steps != null and not #lists.isEmpty(steps)}" class="card main-card">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-primary fw-semibold d-flex align-items-center gap-2">
+                        <i class="bi bi-diagram-3-fill"></i>
+                        <span>Tiến trình thực hiện phép toán (Thuật toán lớp 3)</span>
+                    </h5>
+                    <span class="badge bg-primary rounded-pill px-3 py-2 fs-6" th:text="'Tổng cộng: ' + ${#lists.size(steps)} + ' bước'">
+                        4 bước
+                    </span>
+                </div>
+                <div class="card-body p-4 pt-2">
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Dưới đây là chi tiết từng bước cộng từ phải sang trái (hàng đơn vị, hàng chục,...) được ghi nhận từ module <code>core</code>:
+                    </p>
+
+                    <div class="list-group list-group-flush gap-2">
+                        <div th:each="step, iterStat : ${steps}" 
+                             class="list-group-item rounded-3 step-item shadow-sm p-3 bg-white">
+                            <div class="d-flex align-items-start gap-2">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold"
+                                      th:text="'Bước ' + ${iterStat.count}">
+                                    Bước 1
+                                </span>
+                                <div class="flex-grow-1 text-dark break-word" th:text="${step}">
+                                    Nội dung bước tính
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center text-muted py-4 border-top bg-white">
+    <div class="container small">
+        <p class="mb-1">
+            <strong>Dự án kiểm tra kỹ thuật (Task 2)</strong>: Phát triển Web cộng 2 số lớn & hiển thị tiến trình.
+        </p>
+        <p class="mb-0 text-secondary">
+            Ứng viên: <strong>Nguyễn Tấn Đạt (NTDat-16)</strong> &bull; Tái sử dụng Task 1 dưới dạng Maven Sub-Module <code>core</code>
+        </p>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function setExample(a, b) {
+        document.getElementById('stn1').value = a;
+        document.getElementById('stn2').value = b;
+    }
+
+    function setBigNumberExample() {
+        // Tạo 2 số cực lớn có 50 chữ số để biểu diễn
+        document.getElementById('stn1').value = "98765432109876543210987654321098765432109876543210";
+        document.getElementById('stn2').value = "12345678901234567890123456789012345678901234567890";
+    }
+
+    function clearForm() {
+        document.getElementById('stn1').value = '';
+        document.getElementById('stn2').value = '';
+        document.getElementById('stn1').focus();
+    }
+</script>
+</body>
+</html>

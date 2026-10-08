@@ -6,34 +6,41 @@
     <groupId>com.github.ntdat</groupId>
     <artifactId>testTechnical</artifactId>
     <version>0.0.1</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>testTechnical - MyBigNumber</name>
-    <description>Add 2 large numbers using elementary school algorithm</description>
+    <name>testTechnical - Multi-Module Project</name>
+    <description>Dự án Cộng 2 Số Lớn gồm module Core và Web Application</description>
+
+    <modules>
+        <module>core</module>
+        <module>web</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.boot.version>3.2.5</spring.boot.version>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot Dependencies BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
-        </plugins>
-    </build>
+            <!-- Module Core -->
+            <dependency>
+                <groupId>com.github.ntdat</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
